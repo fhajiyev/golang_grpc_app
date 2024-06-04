@@ -1,0 +1,2 @@
+def isImpressed = (params['seenIDs'] != null && params['seenIDs'].containsKey(doc['id'].value + "")) ? -6 : 0;
+isImpressed

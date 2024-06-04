@@ -1,0 +1,3 @@
+// Relatedness
+def relatedScore = (doc['related'].value == doc['id'].value || doc['owner_id'].value > 0)? 100:1;
+relatedScore

@@ -1,0 +1,15 @@
+// Recency
+def todayCalendar = Calendar.getInstance();
+def targetMillis = (doc['owner_id'].value > 0)? todayCalendar.getTimeInMillis() : doc['start_date'].date.getMillis();
+def targetCalendar = Calendar.getInstance();
+targetCalendar.setTimeInMillis(targetMillis);
+def timeDiff = ChronoUnit.HOURS.between(targetCalendar.toInstant(), todayCalendar.toInstant());
+def recency = 1 / ((timeDiff < 0)? 1000 : Math.exp(timeDiff));
+
+// OCB Provider Boost
+def oid = doc['organization_id'].value;
+if (oid == 148 && timeDiff < 24) {
+    recency = 1.0 / Math.exp(Calendar.HOUR_OF_DAY % 6);
+}
+
+recency

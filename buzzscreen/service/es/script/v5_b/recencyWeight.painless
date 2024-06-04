@@ -1,0 +1,10 @@
+def todayCalendar = Calendar.getInstance();
+def targetMillis = (doc['status'].value == 1)? todayCalendar.getTimeInMillis() : doc['start_date'].date.getMillis();
+def targetCalendar = Calendar.getInstance();
+targetCalendar.setTimeInMillis(targetMillis);
+def timeDiff = ChronoUnit.HOURS.between(targetCalendar.toInstant(), todayCalendar.toInstant());
+def recency = (timeDiff < 0) ? -6.91 : -timeDiff;
+if (doc['organization_id'].value == 148 && timeDiff < 24) {
+    recency = -Calendar.HOUR_OF_DAY % 6;
+}
+recency

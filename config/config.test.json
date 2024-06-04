@@ -1,0 +1,65 @@
+{
+  "name": "Buzzscreen test",
+  "version": "1.0",
+  "server": {
+    "port": 8081
+  },
+  "logger": {
+    "level": "debug"
+  },
+  "loggers": {
+    "device": {
+      "file": "/go/logs/device.json",
+      "formatter": "json"
+    },
+    "device_config": {
+      "file": "/go/logs/device_config.json",
+      "formatter": "json"
+    },
+    "general": {
+      "file": "/go/logs/general.json",
+      "formatter": "json"
+    },
+    "click": {
+      "file": "/go/logs/click.json",
+      "formatter": "json"
+    },
+    "impression": {
+      "file": "/go/logs/impression.json",
+      "formatter": "json"
+    }
+  },
+  "Database": {
+    "Name": "buzzscreen-test",
+    "User": "bs",
+    "Password": "bs123",
+    "Host": "mysql",
+    "Port": "3306",
+    "LogMode": false
+  },
+  "Redis": {
+    "Endpoint": "redis:6379",
+    "DB": 0
+  },
+  "StatRedis": {
+    "Endpoint": "redis:6379",
+    "DB": 3
+  },
+  "CacheRedis": {
+    "Endpoint": "redis:6379",
+    "DB": 1
+  },
+  "ElasticSearch":{
+    "Host": "http://elasticsearch564:9200",
+    "CampaignIndexName": "buzzscreen-dev"
+  },
+  "AccountsvcURL": "accountsvc-dev.accountsvc.svc.cluster.local:9000",
+  "AuthsvcURL": "authsvc-dev.authsvc.svc.cluster.local:9000",
+  "BuzzconInternalURL": "https://screen-dev.buzzvil.com",
+  "SlidejoyURL": "http://test.getslidejoy.com",
+  "InsightURL": "http://internal-a661806fc45d211e7bec506a4dbaf56e-524845644.ap-northeast-1.elb.amazonaws.com",
+  "DynamoTableProfile": "test_buzzscreen_profile",
+  "DynamoTableActivity": "test_buzzscreen_device_activity",
+  "DynamoTablePoint": "test_buzzscreen_point",
+  "DynamoHost": "http://dynamodb:20199"
+}

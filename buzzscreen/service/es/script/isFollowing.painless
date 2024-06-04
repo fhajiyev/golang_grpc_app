@@ -1,0 +1,7 @@
+def isFollowing = 0.0;
+if (params.followingProviders != null ) { // also accounts for v1's abscence of followers
+    if (params.followingProviders.containsKey(doc['provider_id'].value)) {
+        isFollowing = 4;
+    }
+}
+isFollowing

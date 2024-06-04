@@ -1,0 +1,22 @@
+boolean isEmptyValue(def doc, String docKey) {
+    return doc[docKey].value == 0 || doc[docKey].value == null;
+}
+int getCountFromParams(def params, String paramKey, long id) {
+    String idStr = id + '';
+    if (!params.containsKey(paramKey)) {
+        return 0;
+    } else if (!params[paramKey].containsKey(idStr)) {
+        return 0;
+    }
+    return params[paramKey][idStr];
+}
+boolean isActivityNotExceeded(def doc, def params, String docKey, String paramKey) {
+    if (isEmptyValue(doc, docKey)) {
+        return true;
+    }
+    long ipu = doc[docKey].value;
+    int activity = getCountFromParams(params, paramKey, doc['id'].value);
+    return activity < ipu;
+}
+
+isActivityNotExceeded(doc, params, 'ipu', 'seenCampaignCountForHour') && isActivityNotExceeded(doc, params, 'dipu', 'seenCampaignCountForDay')

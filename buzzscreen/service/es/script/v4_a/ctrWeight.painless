@@ -1,0 +1,4 @@
+def a_ctrWeight = 3;
+def ctr = ((float) doc['clicks'].value + 1) / (doc['impressions'].value + 1);
+def ctrWeight = doc['is_ctr_filter_off'].value == true? 0.5 : (ctr > 0.2 ? 0.2 : ctr);
+(a_ctrWeight * Math.log(ctrWeight))

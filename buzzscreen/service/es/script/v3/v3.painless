@@ -1,0 +1,25 @@
+/*
+    painless script for V3 content allocation
+
+    NOTE: change language mode to "Groovy" for highlighting
+*/
+
+// recency
+def id = doc['id'].value.toString();
+def recency = 1f/Math.exp((new Date().getTime() - doc['published_at'].date.getMillis())/(60000*60)); if (recency == 0) recency = 1;
+def sort = recency;
+
+// # of related campaigns
+def relatedCount = doc['related_count'].value; if (relatedCount == 0) relatedCount = 1;
+sort *= relatedCount;
+
+// recommendation score
+def score = (params.scoredCamps != null && params.scoredCamps.containsKey(id))? params.scoredCamps.get(id) : 1; if (score < 1) score = 1;
+sort *= Math.log(1+score);
+
+// relatedness
+def relatedScore = (doc['related'].value == doc['id'].value || doc['owner_id'].value > 0)? 100:1;
+sort *= relatedScore;
+
+// Final Score
+sort

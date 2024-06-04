@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "Waiting for mysql server ..."
+while ! mysqladmin ping -h mysql --silent; do
+    printf "."
+    sleep 1
+done
+
+exec "$@"

@@ -1,0 +1,3 @@
+// Favor manually provided i.e. not crawled contents
+def organizationWeight = (doc['organization_id'].value == 1 && doc['owner_id'].value == 0)? 1 : 1000;
+organizationWeight

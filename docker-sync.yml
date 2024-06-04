@@ -1,0 +1,6 @@
+version: "2"
+syncs:
+  buzzscreen-api-files:
+    notify_terminal: true
+    src: './'
+    sync_excludes: ['.git', '.idea', 'node_modules']

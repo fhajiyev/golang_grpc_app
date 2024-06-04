@@ -1,0 +1,14 @@
+name: buzzscreen-api
+description: Buzzscreen API server.
+repository: Buzzvil/buzzscreen-api
+environments:
+  dev:
+    name: dev
+  staging:
+    name: staging
+  stagingqa:
+    name: stagingqa
+  prodmini:
+    name: prodmini
+  prod:
+    name: prod

@@ -1,0 +1,10 @@
+def a_recWeight = 2;
+def recWeight = 0.01;
+if (doc.containsKey('watson_category_texts') && params.categoryProfile != null ) {
+    for(def i = 0; i < doc['watson_category_texts'].length; i++) {
+        if (params.categoryProfile.containsKey(doc['watson_category_texts'][i])) {
+            recWeight += params.categoryProfile.get(doc['watson_category_texts'][i]) * doc['watson_category_scores'][i];
+        }
+    }
+}
+(a_recWeight * Math.log(recWeight))

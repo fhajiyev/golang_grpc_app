@@ -1,0 +1,4 @@
+// CTR
+def ctr = ((float) doc['clicks'].value + 1) / (doc['impressions'].value + 1);
+def ctrWeight = doc['is_ctr_filter_off'].value == true? 0.5 : (doc['impressions'].value < 500? 0.1 : ctr);
+ctrWeight

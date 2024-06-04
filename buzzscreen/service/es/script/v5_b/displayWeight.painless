@@ -1,0 +1,3 @@
+def a_displayWeight = 0.5;
+def displayWeight = doc['display_weight'].value < 1? 1 : (doc['display_weight'].value);
+(a_displayWeight * Math.log(displayWeight))

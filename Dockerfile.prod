@@ -1,0 +1,19 @@
+# Start from a Debian image with the latest version of Go installed
+# and a workspace (GOPATH) configured at /go.
+FROM golang:1.10.0
+
+RUN mkdir -p /go/src/github.com/Buzzvil/buzzscreen-api
+RUN mkdir -p /go/bin /go/logs /go/shared
+
+# Download GeoLite2 db
+ARG GEOIP_LICENSE_KEY
+RUN wget -O /go/GeoLite2-Country.mmdb.gz "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${GEOIP_LICENSE_KEY}&suffix=tar.gz" && \
+    gunzip /go/GeoLite2-Country.mmdb.gz
+
+WORKDIR /go
+ENV GOBIN /go/bin
+COPY . /go/src/github.com/Buzzvil/buzzscreen-api
+RUN go build -o $GOBIN/buzzscreen-api-server /go/src/github.com/Buzzvil/buzzscreen-api/main.go
+
+EXPOSE 8081
+CMD ["/go/bin/buzzscreen-api-server"]

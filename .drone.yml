@@ -1,0 +1,166 @@
+kind: pipeline
+type: kubernetes
+name: base
+
+steps:
+  - name: base-image
+    image: plugins/ecr
+    environment:
+      PLUGIN_STORAGE_DRIVER: overlay2
+      PLUGIN_CACHE_FROM: <...>.dkr.ecr.ap-northeast-1.amazonaws.com/buzzscreen-api:base
+      GEOIP_LICENSE_KEY:
+        from_secret: geoip_license_key
+    settings:
+      registry: <...>.dkr.ecr.ap-northeast-1.amazonaws.com
+      repo: <...>.dkr.ecr.ap-northeast-1.amazonaws.com/buzzscreen-api
+      region: ap-northeast-1
+      dockerfile: Dockerfile.prod
+      build_args_from_env:
+        - GEOIP_LICENSE_KEY
+      tags:
+        - base
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
+
+---
+kind: pipeline
+type: kubernetes
+name: test
+
+workspace:
+  # /go/bin, /go/logs, /go/share exist under /go
+  path: /go/src/github.com/Buzzvil/buzzscreen-api
+
+steps:
+  - name: lint
+    image: <...>.dkr.ecr.ap-northeast-1.amazonaws.com/buzzscreen-api:base
+    environment:
+      GOPATH: /go
+    commands:
+      - go vet -v ./...
+
+  - name: test
+    image: <...>.dkr.ecr.ap-northeast-1.amazonaws.com/buzzscreen-api:base
+    environment:
+      GOPATH: /go
+      SERVER_ENV: test
+      EVENT_PAYLOAD_SECRET_KEY: TEST_EVENT_PAYLOAD_SECRET_KEY___
+      BASIC_AUTHORIZATION_VALUE: TEST_BASIC_AUTHORIZATION_VALUE
+      BUZZAD_URL: https://ad-dev.buzzvil.com
+      BUZZSCREEN_API_URL: https://screen-dev.buzzvil.com
+      REWARDSVC_URL: rewardsvc-dev-server.rewardsvc.svc.cluster.local:9000
+      AMQP_URL: 127.0.0.1:5672
+    commands:
+      - go test -coverprofile=coverage.txt -covermode=atomic -p 1 -v ./...
+
+  - name: coverage
+    image: plugins/codecov
+    settings:
+      token:
+        from_secret: CODECOV_TOKEN
+      files:
+        - coverage.txt
+
+services:
+  - name: mysql
+    image: mysql:5.6
+    command:
+      [
+        "mysqld",
+        "--character-set-server=utf8",
+        "--collation-server=utf8_unicode_ci",
+      ]
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: buzzscreen-test
+      MYSQL_USER: bs
+      MYSQL_PASSWORD: bs123
+    ports:
+      - 3306
+  - name: elasticsearch564
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.4
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      http.port: "9200"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - 9200
+  - name: redis
+    image: redis:3.2.10
+    ports:
+      - 6379
+  - name: dynamodb
+    image: amazon/dynamodb-local
+    command:
+      ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb", "-port", "20199"]
+    ports:
+      - 20199
+  - name: rabbitmq
+    image: rabbitmq:3.8
+    ports:
+      - 5672
+
+trigger:
+  event:
+    - pull_request
+    - push
+---
+kind: pipeline
+type: kubernetes
+name: publish
+
+steps:
+  - name: publish
+    image: plugins/ecr
+    environment:
+      PLUGIN_STORAGE_DRIVER: overlay2
+      PLUGIN_CACHE_FROM: >
+        <...>.dkr.ecr.ap-northeast-1.amazonaws.com/buzzscreen-api:${DRONE_DEPLOY_TO}
+      GITHUB_TOKEN:
+        from_secret: github_token
+      GEOIP_LICENSE_KEY:
+        from_secret: geoip_license_key
+    settings:
+      registry: <...>.dkr.ecr.ap-northeast-1.amazonaws.com
+      repo: <...>.dkr.ecr.ap-northeast-1.amazonaws.com/buzzscreen-api
+      region: ap-northeast-1
+      dockerfile: Dockerfile.prod
+      build_args_from_env:
+        - GITHUB_TOKEN
+        - GEOIP_LICENSE_KEY
+      tags:
+        - ${DRONE_DEPLOY_TO}-${DRONE_BUILD_NUMBER}-${DRONE_COMMIT_SHA}
+        - ${DRONE_DEPLOY_TO}
+
+  - name: webhook
+    image: plugins/webhook
+    settings:
+      urls: http://spin-gate.spinnaker:8084/webhooks/webhook/deploy-buzzscreen-api
+      content_type: application/json
+      template: |
+        {
+          "image_tag": "${DRONE_DEPLOY_TO}-${DRONE_BUILD_NUMBER}-${DRONE_COMMIT_SHA}",
+          "repository": "${DRONE_REPO}",
+          "ref": "{{build.ref}}",
+          "environment": "${DRONE_DEPLOY_TO}",
+          "deploy_id": "{{build.deploy_id}}",
+          "parameters": {
+            "image_tag": "${DRONE_DEPLOY_TO}-${DRONE_BUILD_NUMBER}-${DRONE_COMMIT_SHA}",
+            "repository": "${DRONE_REPO}",
+            "environment": "${DRONE_DEPLOY_TO}"
+          }
+        }
+trigger:
+  event:
+    - promote
+  target:
+    - prod
+    - prodmini
+    - staging
+    - stagingqa
+    - dev

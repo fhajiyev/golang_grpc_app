@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  test:
+    volumes:
+      - "buzzscreen-api-files:/go/src/github.com/Buzzvil/buzzscreen-api:delegated"
+
+volumes:
+  buzzscreen-api-files:
+    external: true

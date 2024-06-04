@@ -1,0 +1,241 @@
+{
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "term": {
+              "is_enabled": true
+            }
+          },
+          {
+            "range": {
+              "start_date": {
+                "to": "now/h",
+                "include_lower": true,
+                "include_upper": true,
+                "from": null
+              }
+            }
+          },
+          {
+            "range": {
+              "end_date": {
+                "to": null,
+                "include_lower": false,
+                "include_upper": true,
+                "from": "now+1h/h"
+              }
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "term": {
+                    "country": "__GLOB__"
+                  }
+                },
+                {
+                  "term": {
+                    "country": "KR"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "term": {
+                    "target_gender": "__GLOB__"
+                  }
+                },
+                {
+                  "term": {
+                    "target_gender": "M"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "term": {
+                    "target_carrier": "__GLOB__"
+                  }
+                },
+                {
+                  "term": {
+                    "target_carrier": "skt"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "must_not": {
+                "term": {
+                  "target_unit": "-100000043"
+                }
+              },
+              "should": [
+                {
+                  "term": {
+                    "target_unit": "100000043"
+                  }
+                },
+                {
+                  "term": {
+                    "target_unit": "__GLOB__"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "range": {
+              "target_age_min": {
+                "from": null,
+                "include_lower": true,
+                "include_upper": true,
+                "to": 34
+              }
+            }
+          },
+          {
+            "range": {
+              "target_age_max": {
+                "from": 34,
+                "include_lower": true,
+                "include_upper": true,
+                "to": null
+              }
+            }
+          },
+  
+          {
+            "range": {
+              "target_sdk_min": {
+                "from": null,
+                "include_lower": true,
+                "include_upper": true,
+                "to": 10909
+              }
+            }
+          },
+          {
+            "range": {
+              "target_sdk_max": {
+                "from": 10909,
+                "include_lower": true,
+                "include_upper": true,
+                "to": null
+              }
+            }
+          },
+          {
+            "range": {
+              "registered_days_min": {
+                "from": null,
+                "include_lower": true,
+                "include_upper": true,
+                "to": 125
+              }
+            }
+          },
+          {
+            "range": {
+              "registered_days_max": {
+                "from": 125,
+                "include_lower": true,
+                "include_upper": true,
+                "to": null
+              }
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "term": {
+                    "week_slot": "__GLOB__"
+                  }
+                },
+                {
+                  "term": {
+                    "week_slot": "34"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "should": {
+                "term": {
+                  "creative_types": "R"
+                }
+              }
+            }
+          },
+          {
+            "term": {
+              "custom_target_1": "__GLOB__"
+            }
+          },
+          {
+            "term": {
+              "custom_target_2": "__GLOB__"
+            }
+          },
+          {
+            "term": {
+              "custom_target_3": "__GLOB__"
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "term": {
+                    "status": 1
+                  }
+                },
+                {
+                  "term": {
+                    "status": 6
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "size": 25,
+    "sort": [
+      {
+        "_script": {
+          "order": "desc",
+          "script": {
+            "inline": "overwrite me!",
+            "params": {
+              "categoriesScores": {
+                "society": 4.62,
+                "finance": 1.20,
+                "family and relationships": 1.29,
+                "law, govt and politics": 0.812
+              }
+            }
+          },
+          "type": "number"
+        }
+      }
+    ],
+    "timeout": "1000ms"
+  }
+  

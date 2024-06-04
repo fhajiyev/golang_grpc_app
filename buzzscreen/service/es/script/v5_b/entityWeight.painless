@@ -1,0 +1,11 @@
+def a_entityWeight = 1.0;
+def entityWeight = 0.01;
+// Exact match: (entity profile score) * (doc entity score) e.g. 3.4 * 0.92
+if (doc.containsKey('watson_entity_texts') && params.entityProfile != null) {
+    for(def i = 0; i < doc['watson_entity_texts'].length; i++) {
+        if (params.entityProfile.containsKey(doc['watson_entity_texts'][i])) {
+            entityWeight += params.entityProfile.get(doc['watson_entity_texts'][i]) * doc['watson_entity_scores'][i];
+        }
+    }
+}
+(a_entityWeight * Math.log(entityWeight))

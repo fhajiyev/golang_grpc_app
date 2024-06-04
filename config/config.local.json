@@ -1,0 +1,66 @@
+{
+  "name": "Buzzscreen local",
+  "version": "1.0",
+  "server": {
+    "port": 8081
+  },
+  "logger": {
+    "level": "debug",
+    "color": "true"
+  },
+  "loggers": {
+    "device": {
+      "file": "logs/device.json",
+      "formatter": "json"
+    },
+    "device_config": {
+      "file": "logs/device_config.json",
+      "formatter": "json"
+    },
+    "general": {
+      "file": "logs/general.json",
+      "formatter": "json"
+    },
+    "click": {
+      "file": "logs/click.json",
+      "formatter": "json"
+    },
+    "impression": {
+      "file": "logs/impression.json",
+      "formatter": "json"
+    }
+  },
+  "Database": {
+    "Name": "buzzscreen",
+    "User": "buzzscreen",
+    "Password": "R4o7W4iiF22F8af8WGm4sg4rvg3xvy",
+    "Host": "dev-buzzscreen.cjacmy0b3mfl.ap-northeast-1.rds.amazonaws.com",
+    "Port": "3306",
+    "LogMode": true
+  },
+  "Redis": {
+    "Endpoint": "dev-bs-20180915.3dcyck.0001.apne1.cache.amazonaws.com:6379",
+    "DB": 0
+  },
+  "StatRedis": {
+    "Endpoint": "dev-bs-20180915.3dcyck.0001.apne1.cache.amazonaws.com:6379",
+    "DB": 3
+  },
+  "CacheRedis": {
+    "Endpoint": "dev-bs-20180915.3dcyck.0001.apne1.cache.amazonaws.com:6379",
+    "DB": 1
+  },
+  "ElasticSearch": {
+    "Host": "http://internal-prod-bs-es-internal-alb-20170924-1274655356.ap-northeast-1.elb.amazonaws.com:9200",
+    "CampaignIndexName": "buzzscreen-development-2019-05-31"
+  },
+  "AccountsvcURL": "accountsvc-dev.accountsvc.svc.cluster.local:9000",
+  "AuthsvcURL": "authsvc-dev.authsvc.svc.cluster.local:9000",
+  "BuzzconInternalURL": "http://buzzscreen-dev.buzzscreen.svc.cluster.local",
+  "SlidejoyURL": "http://test.getslidejoy.com",
+  "InsightURL": "http://internal-a661806fc45d211e7bec506a4dbaf56e-524845644.ap-northeast-1.elb.amazonaws.com",
+  "ProxyURL": "http://internal-a7a9277bfa9c211e88d4b06e06e2c91e-497352767.ap-northeast-1.elb.amazonaws.com:3128",
+  "DynamoTableProfile": "dev_buzzscreen_profile",
+  "DynamoTableActivity": "dev_buzzscreen_device_activity",
+  "DynamoTablePoint": "dev_buzzscreen_point"
+}
